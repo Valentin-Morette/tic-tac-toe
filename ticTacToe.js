@@ -58,28 +58,29 @@ async function drawBoard(gameId, board = ['-', '-', '-', '-', '-', '-', '-', '-'
 
 	const attachment = new AttachmentBuilder(canvas.toBuffer(), { name: 'tic-tac-toe.png' });
 
-	const createButton = (index, label = '-') =>
+	const createButton = (index, label = '-', disabled = false) =>
 		new ButtonBuilder()
 			.setLabel(label)
 			.setCustomId(`${index}|${gameId}|${board[index]}`)
-			.setStyle(ButtonStyle.Secondary);
+			.setStyle(choseColor(board[index]))
+			.setDisabled(disabled);
 
 	const row1 = new ActionRowBuilder().addComponents(
-		createButton(0, board[0]),
-		createButton(1, board[1]),
-		createButton(2, board[2])
+		createButton(0, board[0], board[0] !== '-'),
+		createButton(1, board[1], board[1] !== '-'),
+		createButton(2, board[2], board[2] !== '-')
 	);
 
 	const row2 = new ActionRowBuilder().addComponents(
-		createButton(3, board[3]),
-		createButton(4, board[4]),
-		createButton(5, board[5])
+		createButton(3, board[3], board[3] !== '-'),
+		createButton(4, board[4], board[4] !== '-'),
+		createButton(5, board[5], board[5] !== '-')
 	);
 
 	const row3 = new ActionRowBuilder().addComponents(
-		createButton(6, board[6]),
-		createButton(7, board[7]),
-		createButton(8, board[8])
+		createButton(6, board[6], board[6] !== '-'),
+		createButton(7, board[7], board[7] !== '-'),
+		createButton(8, board[8], board[8] !== '-')
 	);
 	const embed = new EmbedBuilder()
 		.setImage(`attachment://${attachment.name}`)
@@ -91,6 +92,16 @@ async function drawBoard(gameId, board = ['-', '-', '-', '-', '-', '-', '-', '-'
 	const customIds = board.map((_, i) => `${i}|${board[i]}`);
 
 	return { customIds, embeds: [embed], files: [attachment], components: [row1, row2, row3] };
+}
+
+function choseColor(boardItem) {
+	if (boardItem === 'X') {
+		return ButtonStyle.Success;
+	} else if (boardItem === 'O') {
+		return ButtonStyle.Primary;
+	} else {
+		return ButtonStyle.Secondary;
+	}
 }
 
 export { drawBoard };
